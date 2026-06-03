@@ -378,7 +378,7 @@
         <button class="btn-secondary" id="backBtn">Back to Details</button>
         <button class="btn-primary" id="submitBtn">Submit and Download</button>
       </div>
-      <p class="footer-note">A zip file will be generated with the checklist Excel file and any captured photos.</p>
+      <p class="footer-note">A zip file will be generated with the checklist Excel file, PDF copies for the workbook and mapped sheets, and any captured photos.</p>
     </div>
   </div>
 
@@ -532,6 +532,46 @@
         return;
       }
       selectedSheetsSummary.textContent = `Selected sheets: ${selectedSheetNames.join(', ')}.`;
+    }
+
+    function createPdfBlobFromSheets(title, sections) {
+      const jsPDFLib = window.jspdf && window.jspdf.jsPDF ? window.jspdf.jsPDF : null;
+      if (!jsPDFLib) return null;
+
+      const doc = new jsPDFLib({ unit: 'pt', format: 'letter' });
+      const margin = 14;
+      let cursorY = 24;
+      doc.setFontSize(16);
+      doc.text(title, margin, cursorY);
+      cursorY += 20;
+
+      sections.forEach((section, index) => {
+        if (!section || !section.aoa || !section.aoa.length) return;
+
+        doc.setFontSize(12);
+        doc.text(section.title, margin, cursorY);
+        cursorY += 14;
+
+        const head = [section.aoa[0] || []];
+        const body = section.aoa.slice(1);
+        const table = doc.autoTable({
+          startY: cursorY,
+          head,
+          body,
+          styles: { fontSize: 9, cellPadding: 3 },
+          theme: 'grid',
+          margin: { left: margin, right: margin },
+          headStyles: { fillColor: [20, 72, 133] }
+        });
+
+        cursorY = table.finalY + 18;
+        if (index < sections.length - 1) {
+          doc.addPage();
+          cursorY = 24;
+        }
+      });
+
+      return doc.output('blob');
     }
 
     function renderSheetOptions() {
@@ -735,6 +775,31 @@
       const excelFileName = `${sanitizeFileName(details.soNumber)}_${sanitizeFileName(details.techName)}_Checklist.xlsx`;
       zip.file(excelFileName, excelData);
 
+      const workbookSections = workbook.SheetNames.map(sheetName => ({
+        title: sheetName,
+        aoa: XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 })
+      }));
+      const checklistPdfBlob = createPdfBlobFromSheets(`${sanitizeFileName(details.soNumber)} ${sanitizeFileName(details.techName)} Checklist`, workbookSections);
+      if (checklistPdfBlob) {
+        zip.file(`${sanitizeFileName(details.soNumber)}_${sanitizeFileName(details.techName)}_Checklist.pdf`, checklistPdfBlob);
+      }
+
+      if (Array.isArray(selectedSheets)) {
+        selectedSheets.forEach(sel => {
+          const tabName = sanitizeSheetName(sel.name);
+          if (workbook.Sheets && workbook.Sheets[tabName]) {
+            const sheetSections = [{
+              title: sel.name,
+              aoa: XLSX.utils.sheet_to_json(workbook.Sheets[tabName], { header: 1 })
+            }];
+            const sheetPdfBlob = createPdfBlobFromSheets(`${sanitizeFileName(details.soNumber)} ${sanitizeFileName(details.techName)} ${sanitizeFileName(sel.name)}`, sheetSections);
+            if (sheetPdfBlob) {
+              zip.file(`${sanitizeFileName(details.soNumber)}_${sanitizeFileName(details.techName)}_${sanitizeFileName(sel.name)}.pdf`, sheetPdfBlob);
+            }
+          }
+        });
+      }
+
       // Add photos
       steps.forEach(step => {
         if (step.photoFile && step.photoName) {
@@ -756,6 +821,15 @@
           const dpData = XLSX.write(dpWb, { bookType: 'xlsx', type: 'array' });
           const dpName = `${sanitizeFileName(details.soNumber)}_${sanitizeFileName(details.techName)}_DidNotPass.xlsx`;
           zip.file(dpName, dpData);
+
+          const dpSections = [{
+            title: 'Did Not Pass',
+            aoa: dpRows
+          }];
+          const dpPdfBlob = createPdfBlobFromSheets(`${sanitizeFileName(details.soNumber)} ${sanitizeFileName(details.techName)} Did Not Pass`, dpSections);
+          if (dpPdfBlob) {
+            zip.file(`${sanitizeFileName(details.soNumber)}_${sanitizeFileName(details.techName)}_DidNotPass.pdf`, dpPdfBlob);
+          }
         }
       } catch (err) {
         console.error('Failed to create Did Not Pass file', err);
