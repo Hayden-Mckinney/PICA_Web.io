@@ -175,6 +175,24 @@
       margin-top: 20px;
     }
 
+    .sheet-option-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .sheet-option-row label {
+      flex: 0 0 220px;
+      margin: 0;
+    }
+
+    .sheet-option-row select {
+      flex: 1 1 320px;
+      min-width: 0;
+    }
+
     .step-card {
       background: var(--surface-strong);
       border-radius: 18px;
@@ -247,6 +265,25 @@
       .form-grid.two-column,
       .inline-group.two-column {
         grid-template-columns: 1fr;
+      }
+
+      .sheet-option-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .sheet-option-row label,
+      .sheet-option-row select {
+        flex: 1 1 100%;
+        width: 100%;
+      }
+
+      .button-row {
+        flex-direction: column;
+      }
+
+      .button-row button {
+        width: 100%;
       }
     }
   </style>
@@ -504,10 +541,7 @@
       sheetOptions.forEach(option => {
         const optionId = `sheet-option-${option.replace(/[^a-zA-Z0-9]/g, '-')}`;
         const row = document.createElement('div');
-        row.style.display = 'flex';
-        row.style.alignItems = 'center';
-        row.style.gap = '10px';
-        row.style.marginBottom = '8px';
+        row.className = 'sheet-option-row';
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
