@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Industrial Panel Checklist</title>
+
+  <!-- ======================================== -->
+  <!-- CSS: App styling and responsive layout -->
+  <!-- ======================================== -->
+  <style>
+    /* === Theme colors and base typography === */
+    :root {
+      --bg: #f4f7fb;
+      --surface: #ffffff;
+      --surface-strong: #eef3f9;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #0f4c81;
+      --accent: #06a77d;
+      --danger: #dc2626;
+      --border: #d1d5db;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #eef3f9 0%, #f4f7fb 100%);
+      color: var(--text);
+    }
+
+    /* === Layout containers === */
+    .app-shell {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .app-logo {
+      max-height: 56px;
+      width: auto;
+      margin-bottom: 18px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 2.6vw, 2.8rem);
+      letter-spacing: -0.03em;
+    }
+
+    .card-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .card-header h2 {
+      margin: 0;
+    }
+
+    header p {
+      margin: 12px auto 0;
+      max-width: 720px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 20px;
+      box-shadow: 0 18px 35px rgba(15, 23, 40, 0.06);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .form-grid.two-column {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .full-width {
+      grid-column: span 2;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      background: #ffffff;
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(15, 76, 129, 0.08);
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 12px 26px rgba(15, 76, 129, 0.16);
+    }
+
+    .btn-secondary {
+      background: var(--surface-strong);
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #ffffff;
+    }
+
+    .steps-list {
+      display: grid;
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .step-card {
+      background: var(--surface-strong);
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .step-card h3 {
+      margin: 0;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .step-card p {
+      margin: 8px 0 16px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .step-fields {
+      display: grid;
+      gap: 14px;
+    }
+
+    .inline-group {
+      display: grid;
+      gap: 12px;
+    }
+
+    .inline-group.two-column {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .step-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .step-checkbox input {
+      width: 18px;
+      height: 18px;
+    }
+
+    .alert {
+      display: none;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: #fee2e2;
+      color: #991b1b;
+      margin-bottom: 18px;
+      border: 1px solid #fecaca;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 640px) {
+      .form-grid.two-column,
+      .inline-group.two-column {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ================================================================================================= -->
+  <!-- HTML: App content and forms -->
+  <!-- ======================================== =========================================================-->
+  <div class="app-shell">
+    <header>
+      <img class="app-logo" src="logo.png" alt="John Zink Hamworthy logo" onerror="this.style.display='none'" />
+      <h1>Industrial Panel Checklist</h1>
+      <p>Collect customer, panel and inspection details on mobile devices. Capture initials, comments and photos for each preparation step.</p>
+    </header>
+
+    <!-- Page 1: Sheet selection landing page -->
+    <div id="sheetSelectPage" class="card">
+      <div class="alert" id="sheetSelectAlert"></div>
+      <div class="card-header">
+        <img class="app-logo" src="logo.png" alt="John Zink Hamworthy logo" onerror="this.style.display='none'" />
+        <h2>Choose Sheets</h2>
+      </div>
+      <p>Select the sheet names you want to include in the exported Excel file.</p>
+        <label style="display:block; margin:12px 0;">
+          Optional: upload a different workbook to override the local template
+          <input id="masterWorkbookInput" type="file" accept=".xlsx,.xls" />
+        </label>
+      <div id="sheetOptionsContainer" class="form-grid"></div>
+      <div class="button-row">
+        <button class="btn-primary" id="continueToDetailsBtn">Continue to Job Details</button>
+      </div>
+    </div>
+
+    <!-- Page 2: Job details entry -->
+    <div id="detailsPage" class="card hidden">
+      <div class="alert" id="detailAlert"></div>
+      <div class="card-header">
+        <img class="app-logo" src="logo.png" alt="John Zink Hamworthy logo" onerror="this.style.display='none'" />
+        <h2>Job Details</h2>
+      </div>
+      <p id="selectedSheetsSummary" class="footer-note"></p>
+      <div class="form-grid two-column">
+        <label>
+          Customer
+          <input id="customer" type="text" placeholder="Customer name" required />
+        </label>
+        <label>
+          SO#
+          <input id="soNumber" type="text" placeholder="Sales order number" required />
+        </label>
+        <label>
+          Tech Name
+          <input id="techName" type="text" placeholder="Technician name" required />
+        </label>
+        <label>
+          Test Loc
+          <input id="testLocation" type="text" placeholder="Test location" required />
+        </label>
+        <label>
+          Sys. Desc
+          <input id="systemDescription" type="text" placeholder="System description" required />
+        </label>
+        <label>
+          Date
+          <input id="jobDate" type="date" required />
+        </label>
+        <label class="full-width">
+          Signature
+          <input id="signature" type="text" placeholder="Type your signature or initials" required />
+        </label>
+      </div>
+      <div class="button-row">
+        <button class="btn-secondary" id="backToSheetSelectBtn">Back to Sheet Selection</button>
+        <button class="btn-primary" id="continueBtn">Continue to Preparation</button>
+      </div>
+    </div>
+
+    <!-- Page 3: Checklist with step detail entries -->
+    <div id="checklistPage" class="card hidden">
+      <div class="alert" id="checklistAlert"></div>
+      <div class="card-header">
+        <img class="app-logo" src="logo.png" alt="John Zink Hamworthy logo" onerror="this.style.display='none'" />
+        <h2>Panel Preparation</h2>
+      </div>
+      <p>Select each step, add initials, comments and capture an image with your phone.</p>
+      <div class="button-row">
+        <button class="btn-secondary" id="fillInitialsBtn">Quick fill initials from signature</button>
+      </div>
+      <div id="stepsContainer" class="steps-list"></div>
+
+      <div class="button-row">
+        <button class="btn-secondary" id="backBtn">Back to Details</button>
+        <button class="btn-primary" id="submitBtn">Submit and Download</button>
+      </div>
+      <p class="footer-note">A zip file will be generated with the checklist Excel file and any captured photos.</p>
+    </div>
+  </div>
+
+  <!-- ======================================== -->
+  <!-- JavaScript libraries required for export -->
+  <!-- ======================================== -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+  <!-- ======================================== -->
+  <!-- JavaScript: app logic and export behavior -->
+  <!-- ======================================== -->
+  <script>
+    // --- Element references ---
+    const sheetSelectAlert = document.getElementById('sheetSelectAlert');
+    const sheetOptionsContainer = document.getElementById('sheetOptionsContainer');
+    const selectedSheetsSummary = document.getElementById('selectedSheetsSummary');
+    const detailAlert = document.getElementById('detailAlert');
+    const checklistAlert = document.getElementById('checklistAlert');
+    const sheetSelectPage = document.getElementById('sheetSelectPage');
+    const detailsPage = document.getElementById('detailsPage');
+    const checklistPage = document.getElementById('checklistPage');
+    const continueToDetailsBtn = document.getElementById('continueToDetailsBtn');
+    const backToSheetSelectBtn = document.getElementById('backToSheetSelectBtn');
+    const continueBtn = document.getElementById('continueBtn');
+    const backBtn = document.getElementById('backBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const fillInitialsBtn = document.getElementById('fillInitialsBtn');
+    const stepsContainer = document.getElementById('stepsContainer');
+    const jobDate = document.getElementById('jobDate');
+
+    const sheetOptions = [
+      'VRU Setup',
+      'VRU Config',
+      'PR Electronics',
+      'Timers',
+      'Transmitters',
+      'Fire Eye',
+      'Honeywell 532',
+      'Honeywell 700DC',
+      'VFD',
+      'UDC2800',
+      'Electrical Components',
+      'Electrical Panel Checkout',
+      'Punchlist'
+    ];
+
+    let selectedSheetNames = [];
+    let selectedSheetMappings = {};
+    let selectedSheetObjects = [];
+    let masterWorkbook = null;
+
+    async function loadTemplateWorkbook() {
+      const paths = ['template.xlsx', 'template.xls'];
+      for (const path of paths) {
+        try {
+          const response = await fetch(path);
+          if (!response.ok) throw new Error(`${path} not found`);
+          const data = new Uint8Array(await response.arrayBuffer());
+          masterWorkbook = XLSX.read(data, { type: 'array' });
+          showAlert(sheetSelectAlert, `Loaded template workbook (${path}) with ${masterWorkbook.SheetNames.length} sheets.`);
+          renderSheetOptions();
+          return;
+        } catch (err) {
+          console.warn(`Template load failed for ${path}`, err);
+        }
+      }
+
+      showAlert(sheetSelectAlert, 'No local template found (template.xlsx or template.xls); upload a workbook manually if needed.');
+    }
+
+    // --- Static checklist step definitions (Electrical Panel Checkout) ---
+    const stepDefinitions = [
+      { id: 'step1', title: 'Verify all components are installed properly (circuit breakers, fuses, diodes, polarity, orientation, etc.)', description: '' },
+      { id: 'step2', title: 'Check for proper grounding of the door, panel and backpan by a separate ground wire with rings', description: '' },
+      { id: 'step3', title: 'Check for proper capacities in wire duct', description: '' },
+      { id: 'step4', title: 'Check for proper segregation of AC and DC signals', description: '' },
+      { id: 'step5', title: 'Check wire type, size, and color per electrical drawings', description: '' },
+      { id: 'step6', title: 'Verify adequate wire lengths inside the wire duct', description: '' },
+      { id: 'step7', title: 'Verify wiring is tucked neatly inside the wire duct', description: '' },
+      { id: 'step8', title: 'Verify each wire is labelled as required per the electrical schematic notes (termination point, destination, both, custom, etc.)', description: '' },
+      { id: 'step9', title: 'Verify wire markers are the heat-shrink type and oriented one way', description: '' },
+      { id: 'step10', title: 'Verify all terminations / connections are properly torqued (NO LOOSE WIRES)', description: '' },
+      { id: 'step11', title: 'Verify wiring is per electrical schematic (internally wired, field wired, etc.)', description: '' },
+      { id: 'step12', title: 'Verify all conduit connections are properly sealed and tightened', description: '' },
+      { id: 'step13', title: 'Verify all device covers are properly reinstalled after wiring and electrical checkout', description: '' },
+      { id: 'step14', title: 'Verify proper strip length on wire ends', description: '' },
+      { id: 'step15', title: 'Perform a point-to-point test', description: '' },
+      { id: 'step16', title: 'Verify no dents or scuffs on exterior and interior of enclosure', description: '' },
+      { id: 'step17', title: 'Verify corrosion inhibitor is installed at the top of the enclosure as required', description: '' },
+      { id: 'step18', title: 'Verify panel nameplates (spelling, location) are installed square with panel and per drawings', description: '' },
+      { id: 'step19', title: 'Check panel arrangement (accessibility for maintenance / adjustments)', description: '' },
+      { id: 'step20', title: 'Verify terminal layout / identification is per engineering drawings', description: '' },
+      { id: 'step21', title: 'Verify adequate spare terminals and panel space', description: '' },
+      { id: 'step22', title: 'Verify terminal block labels are computer printed and aligned with each terminal', description: '' },
+      { id: 'step23', title: 'Verify no pencil or layout marks are shown on panel', description: '' },
+      { id: 'step24', title: 'Verify all spare electrical ports are plugged', description: '' },
+      { id: 'step25', title: 'Verify wire duct covers are cut cleanly and are square with panel edges', description: '' },
+      { id: 'step26', title: 'Verify equipment is clean of dirt, grime, and metal shavings', description: '' },
+      { id: 'step27', title: 'Verify wire duct covers are cut to consistent / proper length', description: '' },
+      { id: 'step28', title: 'Verify no wire insulation jackets are present where not required', description: '' },
+      { id: 'step29', title: 'Final visual check for appearance, quality, and professionalism', description: '' },
+      { id: 'step30', title: 'Verify vendor designation on enclosure label (NEMA 12, 4, 4X...) reflects BOM designation', description: '' },
+      { id: 'step31', title: 'Verify hold-down devices installed on relays as required', description: '' },
+      { id: 'step32', title: 'Verify that the UL label and proper UL tagging has been applied (if applicable)', description: '' },
+      { id: 'step33', title: 'Verify there are no excess holes in the panel', description: '' },
+      { id: 'step34', title: 'Verify DIN rail end clamps installed at both ends of all rails', description: '' },
+      { id: 'step35', title: 'Verify required bus jumpers are installed on internal wire side of the terminal strip', description: '' },
+      { id: 'step36', title: 'Perform a pull test on wires', description: '' },
+      { id: 'step37', title: 'Take pictures of equipment inside and outside', description: '' },
+      { id: 'step38', title: 'Verify the Z-purge warning label is engraved & installed (if applicable)', description: '' },
+      { id: 'step39', title: 'Verify the Z-purge is the proper size & group rating', description: '' },
+      { id: 'step40', title: 'Verify multi-conductor cable has heat shrink on the shield and on both ends to cover the cut jacket (if applicable)', description: '' },
+      { id: 'step41', title: 'Upon conclusion of checkout remove all test jumpers and any other components used for testing or checkout', description: '' },
+      { id: 'step42', title: 'Other: item 1 (user provided)', description: '' },
+      { id: 'step43', title: 'Other: item 2 (user provided)', description: '' },
+      { id: 'step44', title: 'Other: item 3 (user provided)', description: '' }
+    ];
+
+    // Store additional state per step, including uploaded photo files.
+    const stepData = stepDefinitions.map(step => ({ ...step, photoFile: null }));
+
+    // --- Utility functions ---
+    function formatDateToToday() {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function showAlert(element, message) {
+      element.textContent = message;
+      element.style.display = 'block';
+      setTimeout(() => {
+        element.style.display = 'none';
+      }, 4500);
+    }
+
+    function sanitizeSheetName(value) {
+      const clean = value.replace(/[^a-zA-Z0-9 \-_.]/g, '');
+      return clean.substring(0, 31).trim() || 'Sheet';
+    }
+
+    function updateSelectedSheetsSummary() {
+      if (!selectedSheetNames.length) {
+        selectedSheetsSummary.textContent = 'No sheets selected yet. Use Back to Sheet Selection to choose pages.';
+        return;
+      }
+      selectedSheetsSummary.textContent = `Selected sheets: ${selectedSheetNames.join(', ')}.`;
+    }
+
+    function renderSheetOptions() {
+      sheetOptionsContainer.innerHTML = '';
+      const availableNames = masterWorkbook ? masterWorkbook.SheetNames : [];
+
+      sheetOptions.forEach(option => {
+        const optionId = `sheet-option-${option.replace(/[^a-zA-Z0-9]/g, '-')}`;
+        const row = document.createElement('div');
+        row.style.display = 'flex';
+        row.style.alignItems = 'center';
+        row.style.gap = '10px';
+        row.style.marginBottom = '8px';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = optionId;
+        checkbox.name = 'sheetOption';
+        checkbox.value = option;
+
+        const label = document.createElement('label');
+        label.htmlFor = optionId;
+        label.textContent = option;
+        label.style.flex = '0 0 220px';
+
+        const select = document.createElement('select');
+        select.id = `map-${optionId}`;
+        select.style.flex = '1 1 auto';
+        const noneOpt = document.createElement('option');
+        noneOpt.value = '';
+        noneOpt.textContent = '(no mapping)';
+        select.appendChild(noneOpt);
+
+        availableNames.forEach(name => {
+          const opt = document.createElement('option');
+          opt.value = name;
+          opt.textContent = name;
+          select.appendChild(opt);
+        });
+
+        // Default the select to a matching sheet name if present
+        if (availableNames.includes(option)) select.value = option;
+        if (selectedSheetMappings[option]) select.value = selectedSheetMappings[option];
+
+        select.addEventListener('change', e => {
+          selectedSheetMappings[option] = e.target.value;
+        });
+
+        checkbox.addEventListener('change', e => {
+          if (e.target.checked) {
+            if (!selectedSheetNames.includes(option)) selectedSheetNames.push(option);
+          } else {
+            selectedSheetNames = selectedSheetNames.filter(s => s !== option);
+            delete selectedSheetMappings[option];
+          }
+          updateSelectedSheetsSummary();
+        });
+
+        // keep checkbox state if already selected
+        if (selectedSheetNames.includes(option)) checkbox.checked = true;
+
+        row.appendChild(checkbox);
+        row.appendChild(label);
+        row.appendChild(select);
+        sheetOptionsContainer.appendChild(row);
+      });
+
+      const hint = document.createElement('div');
+      hint.className = 'footer-note';
+      hint.textContent = 'Upload an Excel file to enable mapping dropdowns. Use the dropdown to map each selected page to a sheet in your workbook.';
+      sheetOptionsContainer.appendChild(hint);
+
+      updateSelectedSheetsSummary();
+    }
+
+    function renderSteps() {
+      stepsContainer.innerHTML = '';
+
+      stepData.forEach((step, index) => {
+        const stepCard = document.createElement('section');
+        stepCard.className = 'step-card';
+
+        stepCard.innerHTML = `
+          <div>
+            <h3>${index + 1}. ${step.title}</h3>
+            <p>${step.description}</p>
+          </div>
+          <div class="step-fields">
+            <div class="inline-group two-column">
+              <label>
+                Initials
+                <input type="text" id="${step.id}-initials" placeholder="Enter initials" />
+              </label>
+              <label>
+                Attach photo
+                <input type="file" id="${step.id}-photo" accept="image/*" capture="environment" />
+              </label>
+            </div>
+            <label>
+              Additional comments
+              <textarea id="${step.id}-comments" placeholder="Notes for this step"></textarea>
+            </label>
+            <label class="step-checkbox">
+              <input type="checkbox" id="${step.id}-completed" />
+              Mark step completed
+            </label>
+          </div>
+        `;
+
+        const fileInput = stepCard.querySelector(`#${step.id}-photo`);
+        fileInput.addEventListener('change', event => {
+          const file = event.target.files[0];
+          step.photoFile = file || null;
+        });
+
+        stepsContainer.appendChild(stepCard);
+      });
+    }
+
+    function sanitizeFileName(value) {
+      return value.replace(/[^a-zA-Z0-9-_\. ]/g, '_').trim();
+    }
+
+    function collectChecklistValues() {
+      return stepData.map((step, index) => {
+        const initials = document.getElementById(`${step.id}-initials`).value.trim();
+        const comments = document.getElementById(`${step.id}-comments`).value.trim();
+        const completed = document.getElementById(`${step.id}-completed`).checked;
+        const photoName = step.photoFile ? `step-${index + 1}-${sanitizeFileName(step.photoFile.name)}` : '';
+
+        return {
+          ...step,
+          initials,
+          comments,
+          completed,
+          photoName
+        };
+      });
+    }
+
+    function createWorkbook(details, steps) {
+      const workbook = XLSX.utils.book_new();
+
+      const detailRows = [
+        ['Field', 'Value'],
+        ['Customer', details.customer],
+        ['SO#', details.soNumber],
+        ['Tech Name', details.techName],
+        ['Test Location', details.testLocation],
+        ['System Description', details.systemDescription],
+        ['Date', details.jobDate],
+        ['Signature', details.signature],
+      ];
+
+      const stepRows = [
+        ['Step', 'Description', 'Completed', 'Initials', 'Comments', 'Photo File'],
+        ...steps.map(step => [
+          step.title,
+          step.description,
+          step.completed ? 'Yes' : 'No',
+          step.initials,
+          step.comments,
+          step.photoName,
+        ])
+      ];
+
+      const detailSheet = XLSX.utils.aoa_to_sheet(detailRows);
+      const stepSheet = XLSX.utils.aoa_to_sheet(stepRows);
+
+      XLSX.utils.book_append_sheet(workbook, detailSheet, 'Job Details');
+      XLSX.utils.book_append_sheet(workbook, stepSheet, 'Preparation Steps');
+
+      return workbook;
+    }
+
+    async function createZip(details, steps, selectedSheets) {
+      const workbook = createWorkbook(details, steps);
+
+      // Append mapped sheets from masterWorkbook
+      if (Array.isArray(selectedSheets)) {
+        selectedSheets.forEach(sel => {
+          const mapped = sel.mappedName || '';
+          const tabName = sanitizeSheetName(sel.name);
+          if (masterWorkbook && mapped && masterWorkbook.Sheets && masterWorkbook.Sheets[mapped]) {
+            try {
+              const src = masterWorkbook.Sheets[mapped];
+              const aoa = XLSX.utils.sheet_to_json(src, { header: 1 });
+              const extraSheet = XLSX.utils.aoa_to_sheet(aoa);
+              XLSX.utils.book_append_sheet(workbook, extraSheet, tabName);
+            } catch (err) {
+              const fallback = XLSX.utils.aoa_to_sheet([['Unable to import sheet', mapped]]);
+              XLSX.utils.book_append_sheet(workbook, fallback, tabName);
+            }
+          } else {
+            const empty = XLSX.utils.aoa_to_sheet([['No data mapped for', sel.name]]);
+            XLSX.utils.book_append_sheet(workbook, empty, tabName);
+          }
+        });
+      }
+
+      const excelData = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const zip = new JSZip();
+
+      const excelFileName = `${sanitizeFileName(details.soNumber)}_${sanitizeFileName(details.techName)}_Checklist.xlsx`;
+      zip.file(excelFileName, excelData);
+
+      // Add photos
+      steps.forEach(step => {
+        if (step.photoFile && step.photoName) {
+          zip.file(step.photoName, step.photoFile);
+        }
+      });
+
+      // Create Did Not Pass workbook (items not completed)
+      try {
+        const failed = steps.filter(s => !s.completed);
+        if (failed.length) {
+          const dpWb = XLSX.utils.book_new();
+          const dpRows = [[ 'Step', 'Description', 'Initials', 'Comments', 'Photo File' ]];
+          failed.forEach((s, i) => {
+            dpRows.push([i + 1, s.title || s.name || '', s.initials || '', s.comments || '', s.photoName || '' ]);
+          });
+          const dpSheet = XLSX.utils.aoa_to_sheet(dpRows);
+          XLSX.utils.book_append_sheet(dpWb, dpSheet, 'Did Not Pass');
+          const dpData = XLSX.write(dpWb, { bookType: 'xlsx', type: 'array' });
+          const dpName = `${sanitizeFileName(details.soNumber)}_${sanitizeFileName(details.techName)}_DidNotPass.xlsx`;
+          zip.file(dpName, dpData);
+        }
+      } catch (err) {
+        console.error('Failed to create Did Not Pass file', err);
+      }
+
+      // Create Punchlist PDF: prefer a mapped Punchlist sheet, otherwise use checklist steps
+      try {
+        let punchAoa = null;
+        let punchTitle = 'Punchlist Report';
+        // find selected mapping for Punchlist
+        if (Array.isArray(selectedSheets)) {
+          const psel = selectedSheets.find(s => (s.name && s.name.toLowerCase() === 'punchlist'));
+          if (psel) {
+            const tabName = sanitizeSheetName(psel.name);
+            if (workbook.Sheets && workbook.Sheets[tabName]) {
+              const src = workbook.Sheets[tabName];
+              punchAoa = XLSX.utils.sheet_to_json(src, { header: 1 });
+              punchTitle = `${psel.name} Report`;
+            }
+          }
+        }
+
+        // Always build the report from the checklist items so the PDF contains every step.
+      punchAoa = [ ['Step', 'Description', 'Passed', 'Initials', 'Comments', 'Photo'] ];
+      steps.forEach((s, i) => {
+        punchAoa.push([i + 1, s.title || s.name || '', s.completed ? 'Yes' : 'No', s.initials || '', s.comments || '', s.photoName || '']);
+      });
+
+        // generate PDF using jsPDF + autotable
+        const jsPDFLib = window.jspdf && window.jspdf.jsPDF ? window.jspdf.jsPDF : null;
+        if (jsPDFLib) {
+          const doc = new jsPDFLib();
+          doc.setFontSize(14);
+          doc.text(punchTitle, 14, 18);
+          const head = [ punchAoa[0] || [] ];
+          const body = punchAoa.slice(1);
+          doc.autoTable({ startY: 24, head: head, body: body, styles: { fontSize: 10 } });
+          const pdfBlob = doc.output('blob');
+          zip.file(`${sanitizeFileName(details.soNumber)}_${sanitizeFileName(details.techName)}_ChecklistReport.pdf`, pdfBlob);
+        }
+      } catch (err) {
+        console.error('Failed to create punchlist PDF', err);
+      }
+
+      const zipName = `${sanitizeFileName(details.soNumber)}_${sanitizeFileName(details.techName)}_Checklist.zip`;
+      const content = await zip.generateAsync({ type: 'blob' });
+      saveAs(content, zipName);
+    }
+
+    // --- Master workbook upload handling ---
+    const masterInputEl = document.getElementById('masterWorkbookInput');
+    masterInputEl.addEventListener('change', event => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const data = new Uint8Array(e.target.result);
+          masterWorkbook = XLSX.read(data, { type: 'array' });
+          showAlert(sheetSelectAlert, `Loaded workbook with ${masterWorkbook.SheetNames.length} sheets.`);
+          renderSheetOptions();
+        } catch (err) {
+          console.error(err);
+          showAlert(sheetSelectAlert, 'Failed to parse Excel file.');
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+    // --- User actions ---
+    continueToDetailsBtn.addEventListener('click', () => {
+      const selected = Array.from(document.querySelectorAll('input[name="sheetOption"]:checked')).map(input => input.value);
+      if (!selected.length) {
+        showAlert(sheetSelectAlert, 'Please choose at least one sheet before continuing.');
+        return;
+      }
+      // Build objects with optional mapping
+      selectedSheetObjects = selected.map(name => {
+        const optionId = `sheet-option-${name.replace(/[^a-zA-Z0-9]/g, '-')}`;
+        const mapSelect = document.getElementById(`map-${optionId}`);
+        const mappedName = mapSelect ? mapSelect.value : '';
+        return { name, mappedName };
+      });
+      selectedSheetNames = selected;
+      updateSelectedSheetsSummary();
+      sheetSelectPage.classList.add('hidden');
+      detailsPage.classList.remove('hidden');
+    });
+
+    backToSheetSelectBtn.addEventListener('click', () => {
+      detailsPage.classList.add('hidden');
+      sheetSelectPage.classList.remove('hidden');
+    });
+
+    continueBtn.addEventListener('click', () => {
+      const customer = document.getElementById('customer').value.trim();
+      const soNumber = document.getElementById('soNumber').value.trim();
+      const techName = document.getElementById('techName').value.trim();
+      const testLocation = document.getElementById('testLocation').value.trim();
+      const systemDescription = document.getElementById('systemDescription').value.trim();
+      const date = document.getElementById('jobDate').value;
+      const signature = document.getElementById('signature').value.trim();
+
+      if (!customer || !soNumber || !techName || !testLocation || !systemDescription || !date || !signature) {
+        showAlert(detailAlert, 'Please complete all job detail fields before continuing.');
+        return;
+      }
+
+      detailsPage.classList.add('hidden');
+      checklistPage.classList.remove('hidden');
+    });
+
+    fillInitialsBtn.addEventListener('click', () => {
+      const signature = document.getElementById('signature').value.trim();
+      if (!signature) {
+        showAlert(checklistAlert, 'Please enter signature initials in Job Details first.');
+        return;
+      }
+      stepData.forEach(step => {
+        const input = document.getElementById(`${step.id}-initials`);
+        if (input) {
+          input.value = signature;
+        }
+      });
+      showAlert(checklistAlert, 'All initials have been filled from the signature.');
+    });
+
+    backBtn.addEventListener('click', () => {
+      checklistPage.classList.add('hidden');
+      detailsPage.classList.remove('hidden');
+    });
+
+    submitBtn.addEventListener('click', async () => {
+      const details = {
+        customer: document.getElementById('customer').value.trim(),
+        soNumber: document.getElementById('soNumber').value.trim(),
+        techName: document.getElementById('techName').value.trim(),
+        testLocation: document.getElementById('testLocation').value.trim(),
+        systemDescription: document.getElementById('systemDescription').value.trim(),
+        jobDate: document.getElementById('jobDate').value,
+        signature: document.getElementById('signature').value.trim(),
+      };
+
+      const steps = collectChecklistValues();
+      const hasCompleted = steps.some(step => step.completed);
+      if (!hasCompleted) {
+        showAlert(checklistAlert, 'Mark at least one preparation step as completed before submitting.');
+        return;
+      }
+
+      try {
+        await createZip(details, steps, selectedSheetObjects);
+        showAlert(checklistAlert, 'Download started. Your zip file includes the Excel checklist and captured photos.');
+      } catch (error) {
+        showAlert(checklistAlert, 'Unable to generate download. Please try again.');
+        console.error(error);
+      }
+    });
+
+    // Initialize default values and render step cards.
+    jobDate.value = formatDateToToday();
+    renderSheetOptions();
+    renderSteps();
+    loadTemplateWorkbook();
+  </script>
+</body>
+</html>
